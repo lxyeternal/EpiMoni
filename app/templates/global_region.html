@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block navbar %}
+<section class="content-header">
+    <h1>全球疫情区域分析</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">全球疫情区域分析</li>
+    </ol>
+</section>
+{% endblock %}
+
+{% block content %}
+
+<div class="box-body">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector1" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector2" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector3" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector4" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+        layui.use(['layer', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            echarts = layui.echarts;
+
+        /**
+         * 现存确诊人数区域分布
+         */
+        var echartsRecords = echarts.init(document.getElementById('echarts-sector1'), 'walden');
+
+        var optionRecords = {
+             title: {
+                text: '新增确诊人数区域分布',
+                subtext: '数据来自国家卫健委',
+                left: 'center'
+              },
+              tooltip: {
+                trigger: 'item'
+              },
+              legend: {
+                orient: 'vertical',
+                left: 'left'
+              },
+              series: [
+                {
+                  name: '新增确诊',
+                  type: 'pie',
+                  radius: '50%',
+                  data: {{ continents_addconfirm_list|safe  }},
+                  emphasis: {
+                    itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                  }
+                }
+              ]
+            };
+        echartsRecords.setOption(optionRecords);
+
+
+        /**
+         * 累计确诊人数区域分布
+         */
+        var echartsPies = echarts.init(document.getElementById('echarts-sector2'), 'walden');
+        var optionPies = {
+            title: {
+                text: '累计确诊人数区域分布',
+                subtext: '数据来自国家卫健委',
+                left: 'center'
+              },
+              tooltip: {
+                trigger: 'item'
+              },
+              legend: {
+                orient: 'vertical',
+                left: 'left'
+              },
+              series: [
+                {
+                  name: '累计确诊',
+                  type: 'pie',
+                  radius: '50%',
+                  data: {{ continents_confirm_list|safe }},
+                  emphasis: {
+                    itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                  }
+                }
+              ]
+            };
+        echartsPies.setOption(optionPies);
+
+
+        /**
+         * 累计治愈人数区域分布
+         */
+        var echartsDataset = echarts.init(document.getElementById('echarts-sector3'), 'walden');
+
+        var optionDataset = {
+              title: {
+                text: '累计治愈人数区域分布',
+                subtext: '数据来自国家卫健委',
+                left: 'center'
+              },
+              tooltip: {
+                trigger: 'item'
+              },
+              legend: {
+                orient: 'vertical',
+                left: 'left'
+              },
+              series: [
+                {
+                  name: '累计治愈',
+                  type: 'pie',
+                  radius: '50%',
+                  data: {{ continents_heal_list|safe }},
+                  emphasis: {
+                    itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                  }
+                }
+              ]
+            };
+
+        echartsDataset.setOption(optionDataset);
+
+
+        /**
+         * 累计死亡人数区域分布
+         */
+        var echartssector2 = echarts.init(document.getElementById('echarts-sector4'), 'walden');
+
+
+        var optionsect2 = {
+             title: {
+                text: '累计死亡人数区域分布',
+                subtext: '数据来自国家卫健委',
+                left: 'center'
+              },
+              tooltip: {
+                trigger: 'item'
+              },
+              legend: {
+                orient: 'vertical',
+                left: 'left'
+              },
+              series: [
+                {
+                  name: '累计死亡',
+                  type: 'pie',
+                  radius: '50%',
+                  data: {{ continents_dead_list|safe }},
+                  emphasis: {
+                    itemStyle: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                  }
+                }
+              ]
+            };
+
+        echartssector2.setOption(optionsect2);
+
+
+        // echarts 窗口缩放自适应
+        window.onresize = function () {
+            echartsRecords.resize();
+        }
+
+    });
+
+</script>
+{% endblock %}

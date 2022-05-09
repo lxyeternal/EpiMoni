@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block navbar %}
+<section class="content-header">
+    <h1>疫情发展预测</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">疫情发展预测</li>
+    </ol>
+</section>
+{% endblock %}
+
+{% block content %}
+
+<div class="box-body">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector2" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector1" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector3" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector4" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+        layui.use(['layer', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            echarts = layui.echarts;
+
+        /**
+         * 现存确诊人数区域分布
+         */
+        var echartsRecords = echarts.init(document.getElementById('echarts-sector1'), 'walden');
+
+        var optionRecords = {
+            title: {
+                text: '德国未来10天疫情发展预测',
+                subtext: 'Logistic模型预测',
+                sublink: 'https://github.com/ecomfe/echarts-stat',
+                left: 'center'
+              },
+              legend: {
+                 bottom: 5
+              },
+              tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                  type: 'cross'
+                }
+              },
+              xAxis: {
+                    type: 'category',
+                    data: {{ germany_month_future_date|safe }}
+                  },
+                  yAxis: {
+                    type: 'value'
+                  },
+                  series: [
+                    {
+                      data: {{ germany_month_future_confirm|safe }},
+                      type: 'line',
+                      smooth: true
+                    }
+                  ]
+                };
+        echartsRecords.setOption(optionRecords);
+
+
+        /**
+         * 累计确诊人数区域分布
+         */
+        var echartsPies = echarts.init(document.getElementById('echarts-sector2'), 'walden');
+        var optionPies = {
+            title: {
+                text: '上海未来10天疫情发展预测',
+                subtext: 'Logistic模型预测',
+                sublink: 'https://github.com/ecomfe/echarts-stat',
+                left: 'center'
+              },
+              legend: {
+                 bottom: 5
+              },
+              tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                  type: 'cross'
+                }
+              },
+                  xAxis: {
+                    type: 'category',
+                    data: {{ sh_month_future_date|safe }}
+                  },
+                  yAxis: {
+                    type: 'value'
+                  },
+                  series: [
+                    {
+                      data: {{ sh_month_future_confirm|safe }},
+                      type: 'line',
+                      smooth: true
+                    }
+                  ]
+                };
+        echartsPies.setOption(optionPies);
+
+
+        /**
+         * 累计治愈人数区域分布
+         */
+        var echartsDataset = echarts.init(document.getElementById('echarts-sector3'), 'walden');
+
+        var optionDataset = {
+            title: {
+                text: '英国未来10天疫情发展预测',
+                subtext: 'Logistic模型预测',
+                sublink: 'https://github.com/ecomfe/echarts-stat',
+                left: 'center'
+              },
+              legend: {
+                 bottom: 5
+              },
+              tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                  type: 'cross'
+                }
+              },
+                xAxis: {
+                    type: 'category',
+                    data: {{ uk_month_future_date|safe }}
+                  },
+                  yAxis: {
+                    type: 'value'
+                  },
+                  series: [
+                    {
+                      data: {{ uk_month_future_confirm|safe }},
+                      type: 'line',
+                      smooth: true
+                    }
+                  ]
+                };
+
+        echartsDataset.setOption(optionDataset);
+
+
+        /**
+         * 累计死亡人数区域分布
+         */
+        var echartssector2 = echarts.init(document.getElementById('echarts-sector4'), 'walden');
+
+
+        var optionsect2 = {
+         title: {
+                text: '法国未来10天疫情发展预测',
+                subtext: 'Logistic模型预测',
+                sublink: 'https://github.com/ecomfe/echarts-stat',
+                left: 'center'
+              },
+              legend: {
+                bottom: 5
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
+                xAxis: {
+                    type: 'category',
+                    data: {{ france_month_future_date|safe }}
+                  },
+                  yAxis: {
+                    type: 'value'
+                  },
+                  series: [
+                    {
+                      data: {{ france_month_future_confirm|safe }},
+                      type: 'line',
+                      smooth: true
+                    }
+                  ]
+                };
+
+        echartssector2.setOption(optionsect2);
+
+
+        // echarts 窗口缩放自适应
+        window.onresize = function () {
+            echartsRecords.resize();
+        }
+
+    });
+
+</script>
+{% endblock %}

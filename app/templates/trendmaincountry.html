@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block navbar %}
+<section class="content-header">
+    <h1>重点国家疫情趋势</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">重点国家疫情趋势</li>
+    </ol>
+</section>
+{% endblock %}
+
+{% block content %}
+
+<div class="box-body">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector1" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector2" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector3" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-sector4" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+        layui.use(['layer', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            echarts = layui.echarts;
+
+        /**
+         * 重点国家现存确诊人数增长趋势
+         */
+        var echartsRecords = echarts.init(document.getElementById('echarts-sector1'), 'walden');
+
+        var optionRecords = {
+                title: {
+                    text: '重点国家现存确诊人数增长趋势',
+                      x: 'center',
+                      textStyle:{
+                        color:'#151E26',
+                        fontSize:16,
+                        fontWeight:'normal',
+                      }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['西班牙', '意大利', '俄罗斯', '英国', '德国', '法国', '巴西', '美国'],
+                    textStyle: {
+                        color: '#B4B4B4'
+                    },
+                    icon: 'stack',
+                    itemWidth:10,
+                    itemHeight:10,
+                    top:'8%',
+                },
+                grid: {
+                    top: '15%',
+                    width: '85%',
+                    bottom: '10%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: {{ date_list|safe }},
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '总人数',
+                    nameTextStyle: {
+                        color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            type: 'dashed',
+                            color: 'rgba(241, 230, 241, .7)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '西班牙',
+                        type: 'line',
+                        stack: '总量',
+                        // symbol:'circle',
+                        symbolSize: 10,
+                        data: {{ trend_storeconfirm[7] }},
+                    },
+                    {
+                        name: '意大利',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[6] }}
+                    },
+                    {
+                        name: '俄罗斯',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[5] }}
+                    },
+                    {
+                        name: '英国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[4] }}
+                    },
+                    {
+                        name: '德国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[3] }}
+                    },
+                    {
+                        name: '法国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[2] }}
+                    },
+                    {
+                        name: '巴西',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[1] }}
+                    },
+                    {
+                        name: '美国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_storeconfirm[0] }}
+                    }
+                ]
+            }
+        echartsRecords.setOption(optionRecords);
+
+
+        /**
+         * 重点国家累计确诊人数增长趋势
+         */
+        var echartsPies = echarts.init(document.getElementById('echarts-sector2'), 'walden');
+        var optionPies = {
+                title: {
+                    text: '重点国家累计确诊人数增长趋势',
+                      x: 'center',
+                      textStyle:{
+                        color:'#151E26',
+                        fontSize:16,
+                        fontWeight:'normal',
+                      }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['西班牙', '意大利', '俄罗斯', '英国', '德国', '法国', '巴西', '美国'],
+                    textStyle: {
+                        color: '#B4B4B4'
+                    },
+                    icon: 'stack',
+                    itemWidth:10,
+                    itemHeight:10,
+                    top:'8%',
+                },
+                grid: {
+                    top: '15%',
+                    width: '85%',
+                    bottom: '10%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: {{ date_list|safe }},
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '总人数',
+                    nameTextStyle: {
+                        color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            type: 'dashed',
+                            color: 'rgba(241, 230, 241, .7)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '西班牙',
+                        type: 'line',
+                        stack: '总量',
+                        // symbol:'circle',
+                        symbolSize: 10,
+                        data: {{ trend_confirm[7] }},
+                    },
+                    {
+                        name: '意大利',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[6] }}
+                    },
+                    {
+                        name: '俄罗斯',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[5] }}
+                    },
+                    {
+                        name: '英国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[4] }}
+                    },
+                    {
+                        name: '德国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[3] }}
+                    },
+                    {
+                        name: '法国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[2] }}
+                    },
+                    {
+                        name: '巴西',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[1] }}
+                    },
+                    {
+                        name: '美国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_confirm[0] }}
+                    }
+                ]
+            }
+        echartsPies.setOption(optionPies);
+
+
+        /**
+         * 重点国家累计治愈人数增长趋势
+         */
+        var echartsDataset = echarts.init(document.getElementById('echarts-sector3'), 'walden');
+
+        var optionDataset = {
+                title: {
+                    text: '重点国家累计治愈人数增长趋势',
+                      x: 'center',
+                      textStyle:{
+                        color:'#151E26',
+                        fontSize:16,
+                        fontWeight:'normal',
+                      }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['西班牙', '意大利', '俄罗斯', '英国', '德国', '法国', '巴西', '美国'],
+                    textStyle: {
+                        color: '#B4B4B4'
+                    },
+                    icon: 'stack',
+                    itemWidth:10,
+                    itemHeight:10,
+                    top:'8%',
+                },
+                grid: {
+                    top: '15%',
+                    width: '85%',
+                    bottom: '10%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: {{ date_list|safe }},
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '总人数',
+                    nameTextStyle: {
+                        color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            type: 'dashed',
+                            color: 'rgba(241, 230, 241, .7)'
+                        }
+                    }
+                },
+                series: [
+                     {
+                        name: '西班牙',
+                        type: 'line',
+                        stack: '总量',
+                        // symbol:'circle',
+                        symbolSize: 10,
+                        data: {{ trend_heal[7] }},
+                    },
+                    {
+                        name: '意大利',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[6] }}
+                    },
+                    {
+                        name: '俄罗斯',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[5] }}
+                    },
+                    {
+                        name: '英国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[4] }}
+                    },
+                    {
+                        name: '德国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[3] }}
+                    },
+                    {
+                        name: '法国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[2] }}
+                    },
+                    {
+                        name: '巴西',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[1] }}
+                    },
+                    {
+                        name: '美国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_heal[0] }}
+                    }
+                ]
+            }
+        echartsDataset.setOption(optionDataset);
+
+
+        /**
+         * 重点国家累计死亡人数增长趋势
+         */
+        var echartssector2 = echarts.init(document.getElementById('echarts-sector4'), 'walden');
+
+        var optionsect2 = {
+                title: {
+                    text: '重点国家累计死亡人数增长趋势',
+                      x: 'center',
+                      textStyle:{
+                        color:'#151E26',
+                        fontSize:16,
+                        fontWeight:'normal',
+                      }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['西班牙', '意大利', '俄罗斯', '英国', '德国', '法国', '巴西', '美国'],
+                    textStyle: {
+                        color: '#B4B4B4'
+                    },
+                    icon: 'stack',
+                    itemWidth:10,
+                    itemHeight:10,
+                    top:'8%',
+                },
+                grid: {
+                    top: '15%',
+                    width: '85%',
+                    bottom: '5%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: {{ date_list|safe }},
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '总人数',
+                    nameTextStyle: {
+                        color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLabel: {
+                      color: 'rgba(21, 30, 38, .7)'
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(241, 241, 241, .7)'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            type: 'dashed',
+                            color: 'rgba(241, 230, 241, .7)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '西班牙',
+                        type: 'line',
+                        stack: '总量',
+                        // symbol:'circle',
+                        symbolSize: 10,
+                        data: {{ trend_dead[7] }},
+                    },
+                    {
+                        name: '意大利',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[6] }}
+                    },
+                    {
+                        name: '俄罗斯',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[5] }}
+                    },
+                    {
+                        name: '英国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[4] }}
+                    },
+                    {
+                        name: '德国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[3] }}
+                    },
+                    {
+                        name: '法国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[2] }}
+                    },
+                    {
+                        name: '巴西',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[1] }}
+                    },
+                    {
+                        name: '美国',
+                        type: 'line',
+                        stack: '总量',
+                        data: {{ trend_dead[0] }}
+                    }
+                ]
+            }
+
+        echartssector2.setOption(optionsect2);
+
+
+        // echarts 窗口缩放自适应
+        window.onresize = function () {
+            echartsRecords.resize();
+        }
+
+    });
+
+</script>
+{% endblock %}

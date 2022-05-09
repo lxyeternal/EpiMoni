@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}首页{% endblock %}
+
+{% block navbar %}
+<section class="content-header">
+    <h1>全国疫情地图</h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 当前位置</li>
+        <li class="active">全国疫情地图</li>
+    </ol>
+</section>
+{% endblock %}
+
+{% block content %}
+
+<div class="box-body">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md8">
+            <div id="echarts-nationmap" style="background-color:#ffffff;min-height:800px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md4">
+            <div id="echarts-bar" style="background-color:#ffffff;min-height:800px;padding: 10px"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    var myChart = echarts.init(document.getElementById('echarts-nationmap'));
+    window.dataList = {{ nationmap_data|safe }};
+        option = {
+         title: {
+              text: '全国疫情热力图',
+              subtext: '现存确诊',
+              left: 'center',
+              top: '30',
+             },
+            tooltip: {
+                triggerOn: "click",
+                formatter: function(e, t, n) {
+                    return .5 == e.value ? e.name + "：现存确诊病例" : e.seriesName + "<br />" + e.name + "：" + e.value
+                }
+            },
+            visualMap: {
+                min: 0,
+                max: 200,
+                left: 26,
+                bottom: 50,
+                showLabel: !0,
+                text: ["高", "低"],
+                inRange: {
+                        color: ['white', 'red']
+                    },
+                show: !0
+            },
+            geo: {
+                map: "china",
+                roam: !1,
+                scaleLimit: {
+                    min: 1,
+                    max: 2
+                },
+                zoom: 1.15,
+                top: 51,
+                label: {
+                    normal: {
+                        show: !0,
+                        fontSize: "12",
+                        color: "rgba(0,0,0,0.7)"
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        shadowBlur: 50,
+                        shadowColor: 'rgba(0, 0, 0, 0.2)',
+                        borderColor: "rgba(0, 0, 0, 0.2)"
+                    },
+                    emphasis: {
+                        areaColor: "#f2d5ad",
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 0,
+                        borderWidth: 0
+                    }
+                }
+            },
+            series: [{
+                name: "现存确诊病例",
+                type: "map",
+                geoIndex: 0,
+                data: window.dataList
+            }]
+        };
+    myChart.setOption(option);
+
+    var myChartbar = echarts.init(document.getElementById('echarts-bar'));
+        //渲染数据的时候计算一下 百分比
+        optionbar = {
+             backgroundColor: '#0f375f',
+             title: {
+              text: '各省市新冠疫情统计',
+              left: 'center',
+              top: '20',
+             },
+             dataZoom: [
+              //Y轴滑动条
+              {
+               type: 'slider', //滑动条
+               show: true, //开启
+               yAxisIndex: [0],
+               left: '93%', //滑动条位置
+               start: 65, //初始化时，滑动条宽度开始标度
+               end: 3,
+               width: '0',
+               fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                {
+                 offset: 0,
+                 color: '#47ACE7',
+                },
+                {
+                 offset: 1,
+                 color: '#47ACE7',
+                },
+               ]),
+               // handleIcon:'image://https://csdnimg.cn/medal/qixiebiaobing4@240.png',
+               borderColor: 'transparent',
+               backgroundColor: 'white', //两边未选中的滑动条区域的颜色
+               showDataShadow: false, //是否显示数据阴影 默认auto
+               showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+              },
+              {
+               type: 'inside',
+               yAxisIndex: 0,
+               zoomOnMouseWheel: false, //滚轮是否触发缩放
+               moveOnMouseMove: true, //鼠标滚轮触发滚动
+               moveOnMouseWheel: true,
+              },
+             ],
+             tooltip: {
+              trigger: 'axis',
+              textStyle: {
+               // 提示框浮层的文本样式。
+               color: '#fff',
+               fontStyle: 'normal',
+               fontWeight: 'normal',
+               fontFamily: 'sans-serif',
+               fontSize: 14,
+              },
+              axisPointer: {
+               type: 'shadow',
+              },
+              extraCssText:
+               'color:#fff;border:1px solid #eee;background:rgba(11,56,109,0.8);box-shadow:rgb(132, 255, 255) 0px 0px 10px inset;',
+             },
+             legend: {
+              data: ['累计确诊', '现存确诊'],
+              right: '80',
+              top: '20',
+              textStyle: {
+               //文字样式
+               color: '#fff',
+               fontSize: '10',
+              },
+             },
+             xAxis: {
+              type: 'value',
+              splitLine: {
+               show: true,
+               lineStyle: {
+                color: '#666',
+               },
+              },
+              axisTick: {
+               show: false,
+              },
+              axisLabel: {
+               textStyle: {
+                color: '#fff',
+                fontSize: 12,
+               },
+              },
+              axisLine: {
+               lineStyle: {
+                color: '#fff',
+               },
+              },
+             },
+             yAxis: {
+              type: 'category',
+              splitLine: {
+               show: false,
+              },
+              axisTick: {
+               show: false,
+              },
+              data: {{ provinces_name_list|safe }},
+              axisLabel: {
+               textStyle: {
+                color: '#fff',
+                fontSize: 12,
+               },
+              },
+              axisLine: {
+               lineStyle: {
+                color: '#ddd',
+               },
+              },
+             },
+             series: [
+              {
+               name: '累计确诊人数',
+               type: 'bar',
+               data: {{ provinces_confirm_list }},
+               itemStyle: {
+                emphasis: {
+                 barBorderRadius: [0, 20, 20, 0],
+                },
+                normal: {
+                 barBorderRadius: [0, 20, 20, 0],
+                 color: new echarts.graphic.LinearGradient(
+                  0,
+                  0,
+                  1,
+                  0,
+                  [
+                   {
+                    offset: 0,
+                    color: 'rgba(30,188,222,0.1)', // 0% 处的颜色
+                   },
+                   {
+                    offset: 1,
+                    color: 'rgba(31,204,234,0.9)', // 100% 处的颜色
+                   },
+                  ],
+                  false
+                 ),
+                },
+               },
+               label: {
+                normal: {
+                 show: false,
+                 formatter: '{c}',
+                 position: 'insideRight',
+                 offset: [-2, 1.5],
+                 textStyle: {
+                  color: '#fff',
+                  fontSize: 10,
+                 },
+                },
+               },
+              },
+              {
+               name: '现存确诊人数',
+               textStyle: {
+                // 提示框浮层的文本样式。
+                color: '#fff',
+                fontStyle: 'normal',
+                fontWeight: 'normal',
+                fontFamily: 'sans-serif',
+                fontSize: 14,
+               },
+               type: 'bar',
+               barGap: '-100%',
+               itemStyle: {
+                color: 'rgba(0,0,0,0)',
+                borderColor: '#fff',
+                padding: 0,
+                emphasis: {
+                 barBorderRadius: [0, 20, 20, 0],
+                },
+                normal: {
+                 barBorderRadius: [0, 20, 20, 0],
+                 color: new echarts.graphic.LinearGradient(
+                  0,
+                  0,
+                  1,
+                  0,
+                  [
+                   {
+                    offset: 0,
+                    color: 'rgba(5,90,202,0.1)', // 0% 处的颜色
+                   },
+                   {
+                    offset: 1,
+                    color: 'rgba(4,121,255,0.9)', // 100% 处的颜色
+                   },
+                  ],
+                  false
+                 ),
+                },
+               },
+               label: {
+                normal: {
+                 show: false,
+                 lineHeight: 5,
+                 formatter: '{c}',
+                 position: 'right',
+                 right: 0,
+                 textStyle: {
+                  color: '#fff',
+                  fontSize: 12,
+                 },
+                },
+               },
+               z: -10,
+               data: {{ provinces_storeconfirm_list }},
+              },
+             ],
+             barCategoryGap: '20%',
+            };
+
+
+        myChartbar.setOption(optionbar);
+
+
+</script>
+{% endblock %}
